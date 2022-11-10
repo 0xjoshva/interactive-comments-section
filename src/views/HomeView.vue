@@ -55,6 +55,8 @@ background: white;
   height: 10rem;
   border-radius: 8px;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.055);
+  display: flex;
+    align-items: center;
 }
 .reply{
   background: white;
@@ -72,6 +74,8 @@ background: white;
   width: 100%;
   height:fit-content;
   row-gap: 1.5rem;
+
+  align-items: center;
 }
 .points{
   display: flex;
@@ -81,15 +85,20 @@ background: white;
   width: fit-content;
   padding: .5rem;
   padding-block: 1rem;
+  margin-left: 1.8rem;
 
   height: fit-content;
   row-gap: 1rem;
   border-radius: 4px;
   background-color:var(--Verylightgray);
+  color: var(--Moderateblue);
+  font-weight: bold;
+
 }
 .points button{
   border: none;
   background: none;
+
 
 }
 </style>
