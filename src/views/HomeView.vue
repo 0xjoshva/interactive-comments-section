@@ -4,9 +4,20 @@
       <div class="message" v-for="comment in messages.comments" :key="comment.id">
       <div class="comment" v-if="messages.comments != null">
         <div class="points">
-        <button><img src="../assets/icon-plus.svg" alt=""></button>
-        <div class="count">1</div>
-        <button><img src="../assets/icon-minus.svg" alt=""></button>
+        <button @click="comment.score++"><img src="../assets/icon-plus.svg" alt=""></button>
+        <div class="count">{{comment.score}}</div>
+        <button @click="comment.score--"><img src="../assets/icon-minus.svg" alt=""></button>
+        </div>
+        <div class="right">
+          <div class="details" v-for="user in comment" :key="user.username">
+            <img :src="comment.user.image.png" alt="">
+          <p class="username">{{user.username}}</p>
+          </div>
+          <div class="msgcontent">
+            <p>
+              {{}}
+            </p>
+          </div>
         </div>
       </div>
 
