@@ -18,6 +18,7 @@ html, body {
 body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  background-color: hsl(228, 33%, 97%);
 }
 img, picture, video, canvas, svg {
   display: block;

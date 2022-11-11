@@ -25,7 +25,7 @@
             </span>
             <button v-show="comment.user.username != messages.currentUser.username" class="replybtn"><img src="../assets/icon-reply.svg" alt=""> Reply</button>
             <div v-show="comment.user.username === messages.currentUser.username" class="crudbuttons">
-            <button class="deletebtn"><img src="../assets/icon-delete.svg" alt="" @click="deleteComment()"> Delete</button>
+            <button class="deletebtn" @click="modalOpen = true"><img src="../assets/icon-delete.svg" alt="" @click="openModel()"> Delete</button>
             <button class="editbtn"><img src="../assets/icon-edit.svg" alt=""> Edit</button>
           </div>
             </div>
@@ -79,9 +79,19 @@
           placeholder="Add a comment..."
           v-model="textmessage"
         ></textarea>
-        <button @click="sendComment()" @keypress.enter="sendComment()">SEND</button>
+        <button @click="sendComment()" :disabled="textmessage === ''">SEND</button>
       </div>
     </section>
+    <div class="modal-backdrop" v-show="modalOpen">
+<div class="modal">
+  <h1>Delete comment</h1>
+  <p>Are you sure you want to delete this comment? This will remove the comment and it can't be undone.</p>
+  <div class="modal-buttons">
+    <button>YES, DELETE</button>
+    <button @click="modalOpen = false">NO, CANCEL</button>
+  </div>
+</div>
+    </div>
   </main>
 </template>
 
@@ -94,7 +104,8 @@ export default {
   data() {
     return {
       messages: messageData,
-      textmessage: "",
+      textmessage: '',
+      modalOpen: true,
     };
   },
    methods: {
@@ -115,16 +126,44 @@ export default {
        })
        this.textmessage = '';
      },
-     deleteComment() {
-        let id = this.comment.id;
-       for (let i = 0; i <= this.messages.comments.length; i++){
-          return   this.messages = messages.filter(messages.comments ===)
-       }
-  }
     }
   }
 </script>
 <style scoped>
+.modal-backdrop{
+  position: absolute;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.288);
+  
+  min-width: 100%;
+  min-height: 125%;
+    animation: fadeIn .4s linear;
+    backdrop-filter: blur(1px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.modal{
+ background: white;
+ width: 25rem;
+ height: 15rem;
+ position: sticky;
+ padding: 2rem;
+}
+.modal h1{
+  font-size: 1.4rem;
+}
+@keyframes fadeIn {
+  0%{
+    opacity: 0.1;
+    backdrop-filter: blur(.1px);
+  }
+  100%{
+    opacity: 1;
+    backdrop-filter: blur(1px);
+  }
+}
+
 main {
   background-color: hsl(228, 33%, 97%);
   width: 100%;
@@ -132,7 +171,8 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-block: 6rem;
+  
+  
 }
 section {
   width: 45rem;
@@ -141,6 +181,9 @@ section {
   flex-direction: column;
   align-items: center;
   row-gap: 1.5rem;
+  padding-block: 6rem;
+
+  
 }
 .panel {
   background: white;
@@ -156,6 +199,21 @@ section {
 .comment {
   width: 100%;
   align-items: center;
+  animation: comeIn .2s linear;
+}
+@keyframes comeIn {
+  0%{
+    transform: translateY(300px);
+    scale: 0.1;
+  }
+  50%{
+transform: translateY(150px);
+    scale: 0.5;
+  }
+  100%{
+    transform: translateY(0px);
+    scale: 1;
+  }
 }
 .reply {
   width: 85%;
@@ -253,7 +311,8 @@ section {
 }
 #textarea {
   width: 30rem;
-  height: 6rem;
+  min-height: 6rem;
+  height: fit-content;
   resize: none;
   border: 2px solid var(--Lightgray);
   border-radius: 6px;
@@ -262,6 +321,7 @@ section {
   color: var(--GrayishBlue);
   font-size: 1rem;
   outline: none;
+  
 }
 #textarea:focus{
   border: 2px solid var(--Lightgrayishblue);
@@ -277,12 +337,23 @@ section {
   padding-block: .6rem;
   border-radius: 8px;
   transition: ease .2s all;
+  
 
 }
-.textbox button:hover{
-  opacity: .8;
+.textbox button:disabled{
+  cursor: not-allowed;
+  filter: grayscale(1);
 }
-button:hover{
+.textbox button:enabled:hover{
+  opacity: .8;
+  
+
+}
+crudbuttons button{
+  transition: .2s ease all;
+}
+.crudbuttons button:hover{
    opacity: .8;
 }
+
 </style>
