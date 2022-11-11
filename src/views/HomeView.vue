@@ -1,22 +1,29 @@
 <template>
   <main>
     <section>
-        <div class="modal-backdrop" v-show="modalOpen">
-<div class="modal">
-  <h1>Delete comment</h1>
-  <p>Are you sure you want to delete this comment? This will remove the comment and it can't be undone.</p>
-  <div class="modal-buttons">
-    <button @click="deleteComment(comment.id)">YES, DELETE</button>
-    <button @click="modalOpen = false">NO, CANCEL</button>
-  </div>
-</div>
-    </div>
+      <div class="modal-backdrop" v-show="modalOpen">
+        <div class="modal">
+          <h1>Delete comment</h1>
+          <p>
+            Are you sure you want to delete this comment? This will remove the
+            comment and it can't be undone.
+          </p>
+          <div class="modal-buttons">
+            <button @click="deleteComment(comment.id)">YES, DELETE</button>
+            <button @click="modalOpen = false">NO, CANCEL</button>
+          </div>
+        </div>
+      </div>
       <div
         class="comment-container"
         v-for="comment in messages.comments"
         :key="comment.id"
       >
-        <div class="comment panel" v-if="messages.comments != null" ref="commentpanel">
+        <div
+          class="comment panel"
+          v-if="messages.comments != null"
+          ref="commentpanel"
+        >
           <div class="points">
             <button @click="comment.score++">
               <img src="../assets/icon-plus.svg" alt="" />
@@ -29,20 +36,66 @@
           <div class="right">
             <div class="msgtop">
               <span class="details">
-              <img :src="comment.user.image.png" alt="" class="avatar" />
-              <p class="username">{{comment.user.username }}</p>
-              <p class="created">{{ comment.createdAt }}</p>
-            </span>
-            <button v-show="comment.user.username != messages.currentUser.username" class="replybtn"><img src="../assets/icon-reply.svg" alt=""> Reply</button>
-            <div v-show="comment.user.username === messages.currentUser.username" class="crudbuttons">
-            <button class="deletebtn" @click="modalOpen = true"><img src="../assets/icon-delete.svg" alt="" @click="openModel()"> Delete</button>
-            <button class="editbtn" @click="allowEdit = true" v-show="allowEdit === false"><img src="../assets/icon-edit.svg" alt=""> Edit</button>
-          </div>
+                <img :src="comment.user.image.png" alt="" class="avatar" />
+                <p class="username">{{ comment.user.username }}</p>
+                <p class="created">{{ comment.createdAt }}</p>
+              </span>
+              <button
+                v-show="comment.user.username != messages.currentUser.username"
+                class="replybtn"
+              >
+                <img src="../assets/icon-reply.svg" alt="" /> Reply
+              </button>
+              <div
+                v-show="comment.user.username === messages.currentUser.username"
+                class="crudbuttons"
+              >
+                <button class="deletebtn" @click="modalOpen = true">
+                  <img
+                    src="../assets/icon-delete.svg"
+                    alt=""
+                    @click="openModel()"
+                  />
+                  Delete
+                </button>
+                <button
+                  class="editbtn"
+                  @click="allowEditComment = true"
+                  v-show="allowEditComment === false"
+                >
+                  <img src="../assets/icon-edit.svg" alt="" /> Edit
+                </button>
+              </div>
             </div>
             <div class="msgcontent">
-              <p class="content" v-show="allowEdit === false || comment.user.username !== messages.currentUser.username">{{ comment.content }}</p>
-              <textarea id="textareaEdit" type="text" v-model="comment.content" v-show="allowEdit === true && comment.user.username === messages.currentUser.username"></textarea>
-              <button v-show="allowEdit === true && comment.user.username === messages.currentUser.username"  @click="allowEdit = false" class="btnupdate">UPDATE</button>
+              <p
+                class="content"
+                v-show="
+                  allowEditComment === false ||
+                  comment.user.username !== messages.currentUser.username
+                "
+              >
+                {{ comment.content }}
+              </p>
+              <textarea
+                id="textareaEdit"
+                type="text"
+                v-model="comment.content"
+                v-show="
+                  allowEditComment === true &&
+                  comment.user.username === messages.currentUser.username
+                "
+              ></textarea>
+              <button
+                v-show="
+                  allowEditComment === true &&
+                  comment.user.username === messages.currentUser.username
+                "
+                @click="allowEditComment = false"
+                class="btnupdate"
+              >
+                UPDATE
+              </button>
             </div>
           </div>
         </div>
@@ -65,20 +118,66 @@
           <div class="right">
             <div class="msgtop">
               <span class="details">
-              <img :src="reply.user.image.png" alt="" class="avatar" />
-              <p class="username">{{ reply.user.username }}</p>
-              <p class="created">{{ reply.createdAt }}</p>
-            </span>
-            <button v-if="reply.user.username != messages.currentUser.username" class="replybtn"><img src="../assets/icon-reply.svg" alt=""> Reply</button>
-            <div v-if="reply.user.username === messages.currentUser.username" class="crudbuttons">
-            <button class="deletebtn"><img src="../assets/icon-delete.svg" alt="" > Delete</button>
-            <button class="editbtn"><img src="../assets/icon-edit.svg" alt=""> Edit</button>
-          </div>
-            
-            
+                <img :src="reply.user.image.png" alt="" class="avatar" />
+                <p class="username">{{ reply.user.username }}</p>
+                <p class="created">{{ reply.createdAt }}</p>
+              </span>
+              <button
+                v-if="reply.user.username != messages.currentUser.username"
+                class="replybtn"
+              >
+                <img src="../assets/icon-reply.svg" alt="" /> Reply
+              </button>
+              <div
+                v-if="reply.user.username === messages.currentUser.username"
+                class="crudbuttons"
+              >
+                <button class="deletebtn" @click="modalOpen = true">
+                  <img
+                    src="../assets/icon-delete.svg"
+                    alt=""
+                    @click="openModel()"
+                  />
+                  Delete
+                </button>
+                <button
+                  class="editbtn"
+                  @click="allowEditReply = true"
+                  v-show="allowEditReply === false"
+                >
+                  <img src="../assets/icon-edit.svg" alt="" /> Edit
+                </button>
+              </div>
             </div>
             <div class="msgcontent">
-              <p class="content"><p class="at">{{ "@" + reply.replyingTo + ' ' + reply.content}}</p> {{  }}</p>
+              <p class="at">{{ "@" + reply.replyingTo }}</p>
+              <p
+                class="content replycontent"
+                v-show="
+                  allowEditReply === false ||
+                  reply.user.username !== messages.currentUser.username
+                "
+              >
+                {{ reply.content }}
+              </p>
+              <textarea
+                id="textareaEdit"
+                :value="reply.content"
+                v-show="
+                  allowEditReply === true &&
+                  reply.user.username === messages.currentUser.username
+                "
+              ></textarea>
+              <button
+                v-show="
+                  allowEditReply === true &&
+                  reply.user.username === messages.currentUser.username
+                "
+                @click="allowEditReply = false"
+                class="btnupdate"
+              >
+                UPDATE
+              </button>
             </div>
           </div>
         </div>
@@ -91,10 +190,11 @@
           placeholder="Add a comment..."
           v-model="textmessage"
         ></textarea>
-        <button @click="sendComment()" :disabled="textmessage === ''">SEND</button>
+        <button @click="sendComment()" :disabled="textmessage === ''">
+          SEND
+        </button>
       </div>
     </section>
-  
   </main>
 </template>
 
@@ -107,102 +207,103 @@ export default {
   data() {
     return {
       messages: messageData,
-      textmessage: '',
+      textmessage: "",
       modalOpen: false,
-      allowEdit: false,
+      allowEditComment: false,
+      allowEditReply: false,
     };
   },
-   methods: {
+  methods: {
     sendComment() {
-       this.messages.comments.push({   
-      id: this.messages.comments.length + 3,
-      content: this.textmessage,
-      createdAt: "just now",
-      score: 0,
-      user: {
-        image: { 
-          png: this.messages.currentUser.image.png,
-          webp: "./images/avatars/image-amyrobson.webp"
+      this.messages.comments.push({
+        id: this.messages.comments.length + 3,
+        content: this.textmessage,
+        createdAt: "just now",
+        score: 0,
+        user: {
+          image: {
+            png: this.messages.currentUser.image.png,
+            webp: "./images/avatars/image-amyrobson.webp",
+          },
+          username: this.messages.currentUser.username,
         },
-        username: this.messages.currentUser.username
-      },
-      replies: []
-       })
-       this.textmessage = '';
-     },
-    }
-  }
+        replies: [],
+      });
+      this.textmessage = "";
+    },
+  },
+};
 </script>
 <style scoped>
-.modal-backdrop{
+.modal-backdrop {
   position: fixed;
   z-index: 10;
   background: rgba(0, 0, 0, 0.459);
-  
+
   min-width: 100%;
   min-height: 100vh;
-    animation: fadeIn .4s linear;
-    backdrop-filter: blur(1px);
- display: flex;
- justify-content: center;
- align-items: center;
+  animation: fadeIn 0.4s linear;
+  backdrop-filter: blur(1px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-.modal{
- background: white;
- width: 24rem;
- height: 15rem;
- position: fixed;
- padding: 2rem;
- display: flex;
- flex-direction: column;
- border-radius: 8px;
-color: var(--GrayishBlue);
+.modal {
+  background: white;
+  width: 24rem;
+  height: 15rem;
+  position: fixed;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  color: var(--GrayishBlue);
 }
-.modal h1{
+.modal h1 {
   font-size: 1.4rem;
   font-weight: 500;
   color: var(--Darkblue);
-  padding-bottom: .5rem;
+  padding-bottom: 0.5rem;
 }
-.modal-buttons{
-display: flex;
-align-items: flex-end;
-width:100%;
-height: 100%;
-justify-content: space-between;
-flex-direction: row-reverse;
+.modal-buttons {
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  height: 100%;
+  justify-content: space-between;
+  flex-direction: row-reverse;
 }
-.modal-buttons button{
+.modal-buttons button {
   padding-inline: 1.5rem;
-  padding-block: .6rem;
+  padding-block: 0.6rem;
   border-radius: 8px;
   cursor: pointer;
-  transition: ease all .1s;
+  transition: ease all 0.1s;
 }
-.modal-buttons button:hover{
+.modal-buttons button:hover {
   opacity: 0.8;
 }
-.modal-buttons button:active{
-scale: 1.1;
+.modal-buttons button:active {
+  scale: 1.1;
 }
-.modal-buttons button:nth-child(1){
+.modal-buttons button:nth-child(1) {
   background: none;
   border: none;
   background: var(--SoftRed);
   color: var(--White);
 }
-.modal-buttons button:nth-child(2){
+.modal-buttons button:nth-child(2) {
   background: none;
   border: none;
   background: var(--GrayishBlue);
   color: var(--White);
 }
 @keyframes fadeIn {
-  0%{
+  0% {
     opacity: 0.1;
-    backdrop-filter: blur(.1px);
+    backdrop-filter: blur(0.1px);
   }
-  100%{
+  100% {
     opacity: 1;
     backdrop-filter: blur(1px);
   }
@@ -215,8 +316,7 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction:  row;
- 
+  flex-direction: row;
 }
 section {
   width: 45rem;
@@ -225,7 +325,6 @@ section {
   flex-direction: column;
   align-items: center;
   row-gap: 1.5rem;
-  
 }
 .panel {
   background: white;
@@ -237,26 +336,25 @@ section {
 
   column-gap: 1rem;
   padding: 2rem;
-
 }
-.panel.comment{
-    margin-top: 1rem;
+.panel.comment {
+  margin-top: 1rem;
 }
 .comment {
   width: 100%;
   align-items: center;
-  animation: comeIn .2s linear;
+  animation: comeIn 0.2s linear;
 }
 @keyframes comeIn {
-  0%{
+  0% {
     transform: translateY(300px);
     scale: 0.1;
   }
-  50%{
-transform: translateY(150px);
+  50% {
+    transform: translateY(150px);
     scale: 0.5;
   }
-  100%{
+  100% {
     transform: translateY(0px);
     scale: 1;
   }
@@ -314,23 +412,24 @@ transform: translateY(150px);
   column-gap: 1rem;
   width: 100%;
 }
-.msgtop button{
+.msgtop button {
   background: none;
   outline: none;
   border: none;
   display: flex;
-  align-items: center;column-gap: .4rem;
+  align-items: center;
+  column-gap: 0.4rem;
   color: var(--Moderateblue);
   font-weight: 500;
 }
-.deletebtn{
+.deletebtn {
   color: var(--SoftRed) !important;
 }
-.crudbuttons{
+.crudbuttons {
   display: flex;
   column-gap: 1rem;
 }
-.details{
+.details {
   display: flex;
   align-items: center;
   column-gap: 1rem;
@@ -368,12 +467,11 @@ transform: translateY(150px);
   color: var(--GrayishBlue);
   font-size: 1rem;
   outline: none;
-  
 }
-#textarea:focus{
+#textarea:focus {
   border: 2px solid var(--Lightgrayishblue);
 }
-.textbox button{
+.textbox button {
   background: var(--Moderateblue);
   border: none;
   outline: none;
@@ -381,33 +479,29 @@ transform: translateY(150px);
   width: fit-content;
   color: var(--White);
   padding-inline: 1.7rem;
-  padding-block: .6rem;
+  padding-block: 0.6rem;
   border-radius: 8px;
-  transition: ease .2s all;
-  
-
+  transition: ease 0.2s all;
 }
-.textbox button:disabled{
+.textbox button:disabled {
   cursor: not-allowed;
   filter: grayscale(1);
 }
-.textbox button:enabled:active{
-scale: 1.1;
+.textbox button:enabled:active {
+  scale: 1.1;
 }
-.textbox button:enabled:hover{
-  opacity: .8;
-  
-
+.textbox button:enabled:hover {
+  opacity: 0.8;
 }
-crudbuttons button{
-  transition: .2s ease all;
+crudbuttons button {
+  transition: 0.2s ease all;
 }
-.crudbuttons button:hover{
-   opacity: .8;
-   cursor: pointer;
+.crudbuttons button:hover {
+  opacity: 0.8;
+  cursor: pointer;
 }
-#textareaEdit{
-   width: 100%;
+#textareaEdit {
+  width: 100%;
   min-height: 6rem;
   height: fit-content;
   resize: none;
@@ -419,20 +513,27 @@ crudbuttons button{
   font-size: 1rem;
   outline: none;
 }
-#textareaEdit:focus{
+#textareaEdit:focus {
   border: 2px solid var(--Lightgrayishblue);
 }
-.btnupdate{
-    background: var(--Moderateblue);
+.btnupdate {
+  background: var(--Moderateblue);
   border: none;
   outline: none;
   height: fit-content;
   width: fit-content;
   color: var(--White);
   padding-inline: 1.4rem;
-  padding-block: .6rem;
+  padding-block: 0.6rem;
   border-radius: 8px;
-  transition: ease .2s all;
-  
+  transition: ease 0.2s all;
+}
+.msgcontent p {
+  width: 100%;
+  display: inline;
+}
+.at {
+  color: var(--Moderateblue);
+  font-weight: 500;
 }
 </style>
