@@ -1,6 +1,16 @@
 <template>
   <main>
     <section>
+        <div class="modal-backdrop" v-show="modalOpen">
+<div class="modal">
+  <h1>Delete comment</h1>
+  <p>Are you sure you want to delete this comment? This will remove the comment and it can't be undone.</p>
+  <div class="modal-buttons">
+    <button @click="deleteComment(comment.id)">YES, DELETE</button>
+    <button @click="modalOpen = false">NO, CANCEL</button>
+  </div>
+</div>
+    </div>
       <div
         class="comment-container"
         v-for="comment in messages.comments"
@@ -26,11 +36,13 @@
             <button v-show="comment.user.username != messages.currentUser.username" class="replybtn"><img src="../assets/icon-reply.svg" alt=""> Reply</button>
             <div v-show="comment.user.username === messages.currentUser.username" class="crudbuttons">
             <button class="deletebtn" @click="modalOpen = true"><img src="../assets/icon-delete.svg" alt="" @click="openModel()"> Delete</button>
-            <button class="editbtn"><img src="../assets/icon-edit.svg" alt=""> Edit</button>
+            <button class="editbtn" @click="allowEdit = true" v-show="allowEdit === false"><img src="../assets/icon-edit.svg" alt=""> Edit</button>
           </div>
             </div>
             <div class="msgcontent">
-              <p class="content">{{ comment.content }}</p>
+              <p class="content" v-show="allowEdit === false || comment.user.username !== messages.currentUser.username">{{ comment.content }}</p>
+              <textarea id="textareaEdit" type="text" v-model="comment.content" v-show="allowEdit === true && comment.user.username === messages.currentUser.username"></textarea>
+              <button v-show="allowEdit === true && comment.user.username === messages.currentUser.username"  @click="allowEdit = false" class="btnupdate">UPDATE</button>
             </div>
           </div>
         </div>
@@ -82,16 +94,7 @@
         <button @click="sendComment()" :disabled="textmessage === ''">SEND</button>
       </div>
     </section>
-    <div class="modal-backdrop" v-show="modalOpen">
-<div class="modal">
-  <h1>Delete comment</h1>
-  <p>Are you sure you want to delete this comment? This will remove the comment and it can't be undone.</p>
-  <div class="modal-buttons">
-    <button>YES, DELETE</button>
-    <button @click="modalOpen = false">NO, CANCEL</button>
-  </div>
-</div>
-    </div>
+  
   </main>
 </template>
 
@@ -105,7 +108,8 @@ export default {
     return {
       messages: messageData,
       textmessage: '',
-      modalOpen: true,
+      modalOpen: false,
+      allowEdit: false,
     };
   },
    methods: {
@@ -131,27 +135,67 @@ export default {
 </script>
 <style scoped>
 .modal-backdrop{
-  position: absolute;
+  position: fixed;
   z-index: 10;
-  background: rgba(0, 0, 0, 0.288);
+  background: rgba(0, 0, 0, 0.459);
   
   min-width: 100%;
-  min-height: 125%;
+  min-height: 100vh;
     animation: fadeIn .4s linear;
     backdrop-filter: blur(1px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+ display: flex;
+ justify-content: center;
+ align-items: center;
 }
 .modal{
  background: white;
- width: 25rem;
+ width: 24rem;
  height: 15rem;
- position: sticky;
+ position: fixed;
  padding: 2rem;
+ display: flex;
+ flex-direction: column;
+ border-radius: 8px;
+color: var(--GrayishBlue);
 }
 .modal h1{
   font-size: 1.4rem;
+  font-weight: 500;
+  color: var(--Darkblue);
+  padding-bottom: .5rem;
+}
+.modal-buttons{
+display: flex;
+align-items: flex-end;
+width:100%;
+height: 100%;
+justify-content: space-between;
+flex-direction: row-reverse;
+}
+.modal-buttons button{
+  padding-inline: 1.5rem;
+  padding-block: .6rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: ease all .1s;
+}
+.modal-buttons button:hover{
+  opacity: 0.8;
+}
+.modal-buttons button:active{
+scale: 1.1;
+}
+.modal-buttons button:nth-child(1){
+  background: none;
+  border: none;
+  background: var(--SoftRed);
+  color: var(--White);
+}
+.modal-buttons button:nth-child(2){
+  background: none;
+  border: none;
+  background: var(--GrayishBlue);
+  color: var(--White);
 }
 @keyframes fadeIn {
   0%{
@@ -171,8 +215,8 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
-  
-  
+  flex-direction:  row;
+ 
 }
 section {
   width: 45rem;
@@ -181,8 +225,6 @@ section {
   flex-direction: column;
   align-items: center;
   row-gap: 1.5rem;
-  padding-block: 6rem;
-
   
 }
 .panel {
@@ -195,6 +237,10 @@ section {
 
   column-gap: 1rem;
   padding: 2rem;
+
+}
+.panel.comment{
+    margin-top: 1rem;
 }
 .comment {
   width: 100%;
@@ -223,6 +269,7 @@ transform: translateY(150px);
 }
 .textbox {
   width: 100%;
+  margin-block: 2rem;
 }
 .comment-container {
   display: flex;
@@ -344,6 +391,9 @@ transform: translateY(150px);
   cursor: not-allowed;
   filter: grayscale(1);
 }
+.textbox button:enabled:active{
+scale: 1.1;
+}
 .textbox button:enabled:hover{
   opacity: .8;
   
@@ -354,6 +404,35 @@ crudbuttons button{
 }
 .crudbuttons button:hover{
    opacity: .8;
+   cursor: pointer;
 }
-
+#textareaEdit{
+   width: 100%;
+  min-height: 6rem;
+  height: fit-content;
+  resize: none;
+  border: 2px solid var(--Lightgray);
+  border-radius: 6px;
+  padding-left: 1rem;
+  padding-top: 0.5rem;
+  color: var(--GrayishBlue);
+  font-size: 1rem;
+  outline: none;
+}
+#textareaEdit:focus{
+  border: 2px solid var(--Lightgrayishblue);
+}
+.btnupdate{
+    background: var(--Moderateblue);
+  border: none;
+  outline: none;
+  height: fit-content;
+  width: fit-content;
+  color: var(--White);
+  padding-inline: 1.4rem;
+  padding-block: .6rem;
+  border-radius: 8px;
+  transition: ease .2s all;
+  
+}
 </style>
