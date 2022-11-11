@@ -6,7 +6,7 @@
         v-for="comment in messages.comments"
         :key="comment.id"
       >
-        <div class="comment panel" v-if="messages.comments != null">
+        <div class="comment panel" v-if="messages.comments != null" ref="commentpanel">
           <div class="points">
             <button @click="comment.score++">
               <img src="../assets/icon-plus.svg" alt="" />
@@ -20,12 +20,12 @@
             <div class="msgtop">
               <span class="details">
               <img :src="comment.user.image.png" alt="" class="avatar" />
-              <p class="username">{{ comment.user.username }}</p>
+              <p class="username">{{comment.user.username }}</p>
               <p class="created">{{ comment.createdAt }}</p>
             </span>
             <button v-show="comment.user.username != messages.currentUser.username" class="replybtn"><img src="../assets/icon-reply.svg" alt=""> Reply</button>
             <div v-show="comment.user.username === messages.currentUser.username" class="crudbuttons">
-            <button class="deletebtn"><img src="../assets/icon-delete.svg" alt="" @click="deleteMessage()"> Delete</button>
+            <button class="deletebtn"><img src="../assets/icon-delete.svg" alt="" @click="deleteComment()"> Delete</button>
             <button class="editbtn"><img src="../assets/icon-edit.svg" alt=""> Edit</button>
           </div>
             </div>
@@ -39,6 +39,7 @@
           class="reply panel"
           v-for="reply in comment.replies"
           :key="reply.id"
+          ref="replypanel"
         >
           <div class="points">
             <button @click="reply.score++">
@@ -99,7 +100,7 @@ export default {
    methods: {
     sendComment() {
        this.messages.comments.push({   
-      id: this.messages.length + 1,
+      id: this.messages.comments.length + 3,
       content: this.textmessage,
       createdAt: "just now",
       score: 0,
@@ -115,10 +116,10 @@ export default {
        this.textmessage = '';
      },
      deleteComment() {
-      console.log(this.comment.id)
+   
+  }
     }
-  },
-};
+  }
 </script>
 <style scoped>
 main {
