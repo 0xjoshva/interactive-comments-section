@@ -2,7 +2,7 @@
   <main>
     <section>
       <div
-        class="message"
+        class="comment-container"
         v-for="comment in messages.comments"
         :key="comment.id"
       >
@@ -116,7 +116,10 @@ export default {
        this.textmessage = '';
      },
      deleteComment() {
-   
+        let id = this.comment.id;
+       for (let i = 0; i <= this.messages.comments.length; i++){
+          return   this.messages = messages.filter(messages.comments ===)
+       }
   }
     }
   }
@@ -163,7 +166,7 @@ section {
 .textbox {
   width: 100%;
 }
-.message {
+.comment-container {
   display: flex;
   flex-direction: column;
 
