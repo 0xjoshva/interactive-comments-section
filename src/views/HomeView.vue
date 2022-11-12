@@ -150,7 +150,7 @@
               </div>
             </div>
             <div class="msgcontent">
-              <p class="at">{{ "@" + reply.replyingTo }}</p>
+              <p class="at">{{ "@" + reply.replyingTo + " " }}</p> 
               <p
                 class="content replycontent"
                 v-show="
