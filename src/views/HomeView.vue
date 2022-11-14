@@ -23,6 +23,8 @@
           class="comment panel"
           v-if="messages.comments != null"
           ref="commentpanel"
+            @mouseover="hover = comment.id"
+        @mouseleave="hover = null"
         >
           <div class="points">
             <button @click="comment.score++">
@@ -38,16 +40,19 @@
               <span class="details">
                 <img :src="comment.user.image.png" alt="" class="avatar" />
                 <p class="username">{{ comment.user.username }}</p>
+                <p class="you" v-show="comment.user.username === messages.currentUser.username">you</p>
                 <p class="created">{{ comment.createdAt }}</p>
               </span>
               <button
-                v-show="comment.user.username != messages.currentUser.username"
+
+                v-show="comment.user.username != messages.currentUser.username && hover === comment.id"
                 class="replybtn"
+@click="replyPanel = true, sendReply()"
               >
                 <img src="../assets/icon-reply.svg" alt="" /> Reply
               </button>
               <div
-                v-show="comment.user.username === messages.currentUser.username"
+                v-show="comment.user.username === messages.currentUser.username && hover === comment.id"
                 class="crudbuttons"
               >
                 <button class="deletebtn" @click="modalOpen = true">
@@ -99,13 +104,16 @@
             </div>
           </div>
         </div>
-
+<div class="replycontainer">
         <div
           class="reply panel"
           v-for="reply in comment.replies"
           :key="reply.id"
-          ref="replypanel"
+          :id="reply.id"
+          @mouseover="hover = reply.id"
+          @mouseleave="hover = null"
         >
+        
           <div class="points">
             <button @click="reply.score++">
               <img src="../assets/icon-plus.svg" alt="" />
@@ -120,16 +128,18 @@
               <span class="details">
                 <img :src="reply.user.image.png" alt="" class="avatar" />
                 <p class="username">{{ reply.user.username }}</p>
+                <p class="you" v-show="reply.user.username === messages.currentUser.username">you</p>
                 <p class="created">{{ reply.createdAt }}</p>
               </span>
               <button
-                v-if="reply.user.username != messages.currentUser.username"
+                v-if="reply.user.username != messages.currentUser.username && hover === reply.id"
                 class="replybtn"
+                
               >
                 <img src="../assets/icon-reply.svg" alt="" /> Reply
               </button>
               <div
-                v-if="reply.user.username === messages.currentUser.username"
+                v-if="reply.user.username === messages.currentUser.username && hover === reply.id"
                 class="crudbuttons"
               >
                 <button class="deletebtn" @click="modalOpen = true">
@@ -181,6 +191,8 @@
             </div>
           </div>
         </div>
+
+</div>
       </div>
       <div class="panel textbox">
         <img :src="messages.currentUser.image.png" alt="" class="cUserImage" />
@@ -211,6 +223,9 @@ export default {
       modalOpen: false,
       allowEditComment: false,
       allowEditReply: false,
+      hover: false,
+      replyPanel: false,
+      replyMessage: "",
     };
   },
   methods: {
@@ -231,6 +246,24 @@ export default {
       });
       this.textmessage = "";
     },
+    sendReply() {
+    this.messages.comments.replies.push(
+        {
+          id: "3" + 3,
+          content: "",
+          createdAt: "just now",
+          score: "",
+          replyingTo: "monkey",
+          user: {
+          image: { 
+              png: "https://github.com/0xjoshva/interactive-comments-section/blob/main/src/assets/avatars/image-ramsesmiron.png?raw=true",
+              webp: "./images/avatars/image-ramsesmiron.webp"
+            },
+            username: "mokey",
+          }
+        },);
+      this.replyMessage = "";
+  }
   },
 };
 </script>
@@ -258,6 +291,19 @@ export default {
   flex-direction: column;
   border-radius: 8px;
   color: var(--GrayishBlue);
+}
+.replycontainer::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 40.2rem;
+    min-height: 100%;
+    width: 2px;
+    background-color: var(--Lightgray);
+    z-index: 0;
+    transition: all .2s ease;
+
 }
 .modal h1 {
   font-size: 1.4rem;
@@ -328,17 +374,16 @@ section {
 }
 .panel {
   background: white;
-
+position: relative;
+z-index: 2;
   height: fit-content;
   border-radius: 8px;
-  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.055);
+  box-shadow: 0px 0px 20px 0px rgba(131, 170, 196, 0.274);
   display: flex;
-
   column-gap: 1rem;
   padding: 2rem;
 }
 .panel.comment {
-  margin-top: 1rem;
 }
 .comment {
   width: 100%;
@@ -359,15 +404,16 @@ section {
     scale: 1;
   }
 }
-.reply {
+.replycontainer {
   width: 85%;
   display: flex;
   align-self: flex-end;
   align-items: center;
+  flex-direction: column;
+  row-gap: 1rem;
 }
 .textbox {
   width: 100%;
-  margin-block: 2rem;
 }
 .comment-container {
   display: flex;
@@ -535,5 +581,15 @@ crudbuttons button {
 .at {
   color: var(--Moderateblue);
   font-weight: 500;
+}
+.you{
+  background: var(--Moderateblue);
+  color: var(--White);
+  font-size: .8rem;
+  border-radius: 4px;
+  padding-inline: .4rem;
+  padding-block: .2rem;
+  font-weight: 600;
+  margin-left: -.6rem;
 }
 </style>
